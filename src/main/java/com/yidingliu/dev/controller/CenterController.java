@@ -18,13 +18,15 @@ public class CenterController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final String URI_STARTTIMER="startTimer";
+	
 	private PockerTaskExecutor pockerTaskExecutor;
 	
 	private Integer maxThreads;
 	
 	public CenterController() {
 		if(maxThreads==null){
-			maxThreads=3;
+			maxThreads=50;
 		}
 		pockerTaskExecutor= new PockerTaskExecutor(maxThreads);
 	}
@@ -48,10 +50,12 @@ public class CenterController extends HttpServlet {
 	 */
 	private void domain(HttpServletRequest req, HttpServletResponse resp){
 		String requestMapping = WebUtil.requestMapping(req);
-		long   msec   = Long.valueOf(req.getParameter("msec"));
-		String bakurl = req.getParameter("bakurl");
-		pockerTaskExecutor.receivedTask(new PockerTimeTask(msec, bakurl));
-		WebUtil.write(requestMapping,req,resp);
+		if(URI_STARTTIMER.equalsIgnoreCase(requestMapping)){
+			long   msec   = Long.valueOf(req.getParameter("msec"));
+			String bakurl = req.getParameter("bakurl");
+			pockerTaskExecutor.receivedTask(new PockerTimeTask(msec, bakurl));
+		}
+		WebUtil.write("success",req,resp);
 	}
 
 	public Integer getMaxThreads() {

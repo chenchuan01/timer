@@ -7,11 +7,6 @@
   <servlet>
   	<servlet-name>center</servlet-name>
   	<servlet-class>com.yidingliu.dev.controller.CenterController</servlet-class>
-  	<init-param>
-  		<param-name>maxThreads</param-name>
-  		<param-value>10</param-value>
-  	</init-param>
-  	<load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
   	<servlet-name>center</servlet-name>

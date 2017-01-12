@@ -1,7 +1,7 @@
 package com.yidingliu.dev;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +17,7 @@ public class PockerTaskExecutor {
 	/**
 	 * 任务队列
 	 */
-	private static List<PockerTimeTask> taskQueue;
+	private static Queue<PockerTimeTask> taskQueue;
 	
     /**
      * 线程池
@@ -29,7 +29,7 @@ public class PockerTaskExecutor {
      * @param maxThreads 线程池最大线程数
      */
     public PockerTaskExecutor(int maxThreads) {
-    	taskQueue = new ArrayList<>();
+    	taskQueue = new ConcurrentLinkedQueue<>();
         threadPool = Executors.newFixedThreadPool(maxThreads);
         
         Manager manager = new Manager();
@@ -41,11 +41,7 @@ public class PockerTaskExecutor {
      * @param task
      */
     public void receivedTask(PockerTimeTask task){
-    	synchronized (taskQueue) {
     		taskQueue.add(task);
-    		taskQueue.notify();
-		}
-    	
     }
     
     class Manager implements Runnable {
@@ -53,17 +49,14 @@ public class PockerTaskExecutor {
         public void run() {
             while (true) {
                 try {
-                    synchronized (taskQueue) {
-                        while (taskQueue.isEmpty()) {
-                        	taskQueue.wait();
-                        }
-                        LogUtil.info(PockerTaskExecutor.class,"定时任务队列的长度为:{0}",taskQueue.size());
-                        PockerTimeTask task = taskQueue.remove(0);
-                        num++;
-                        LogUtil.info(PockerTaskExecutor.class,"成功从队列中取到定时任务！",num);
-                        threadPool.execute(task);
+                    while (!taskQueue.isEmpty()) {
+                    	 LogUtil.info(PockerTaskExecutor.class,"定时任务队列的长度为:{0}",taskQueue.size());
+                         PockerTimeTask task = taskQueue.poll();
+                         num++;
+                         LogUtil.info(PockerTaskExecutor.class,"成功从队列中取到定时任务！",num);
+                         threadPool.execute(task);
                     }
-                } catch (InterruptedException t) {
+                } catch (Exception t) {
                     break;
                 }
             }

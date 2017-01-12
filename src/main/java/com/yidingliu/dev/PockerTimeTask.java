@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.yidingliu.dev.util.LogUtil;
+import com.yidingliu.dev.util.WebUtil;
 
 /**
  * 急速扑克定时任务
@@ -34,13 +35,18 @@ public class PockerTimeTask implements Runnable{
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				
-				
 				LogUtil.info(PockerTimeTask.class, 
 						"线程:{0};发送Pocker请求[bakurl=>{1}]",
 						pockerThread.getName(),
 						bakUrl);
+				String rslt=WebUtil.sendGet(bakUrl);  
+				if(rslt!=null&&rslt!=""){
+					LogUtil.info(TimerTask.class, 
+							"请求响应[{0}]",rslt);
+				}
+				
 			}
+
 		}, msec);
 	}
 
