@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yidingliu.dev.PockerTaskExecutor;
-import com.yidingliu.dev.PockerTimeTask;
 import com.yidingliu.dev.util.WebUtil;
 
 public class CenterController extends HttpServlet {
@@ -26,7 +25,7 @@ public class CenterController extends HttpServlet {
 	
 	public CenterController() {
 		if(maxThreads==null){
-			maxThreads=50;
+			maxThreads=100;
 		}
 		pockerTaskExecutor= new PockerTaskExecutor(maxThreads);
 	}
@@ -53,7 +52,7 @@ public class CenterController extends HttpServlet {
 		if(URI_STARTTIMER.equalsIgnoreCase(requestMapping)){
 			long   msec   = Long.valueOf(req.getParameter("msec"));
 			String bakurl = req.getParameter("bakurl");
-			pockerTaskExecutor.receivedTask(new PockerTimeTask(msec, bakurl));
+			pockerTaskExecutor.receivedTask(msec, bakurl);
 		}
 		WebUtil.write("success",req,resp);
 	}

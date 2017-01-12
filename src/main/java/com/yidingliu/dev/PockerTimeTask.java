@@ -20,6 +20,10 @@ public class PockerTimeTask implements Runnable{
 	 * 回调请求地址
 	 */
 	private String bakUrl;
+	/** 
+	 * 序列号
+	 */
+	private Long seraNum;
 	/**
 	 * 定时器
 	 */
@@ -29,6 +33,12 @@ public class PockerTimeTask implements Runnable{
 		bakUrl= callbakUrl;
 		timer = new Timer();
 	}
+	public PockerTimeTask(long mseconds,String callbakUrl,Long seralNum){
+		msec  = mseconds;
+		bakUrl= callbakUrl;
+		timer = new Timer();
+		seraNum=seralNum;
+	}
 	
 	public void run() {
 		final Thread pockerThread = Thread.currentThread();
@@ -36,13 +46,13 @@ public class PockerTimeTask implements Runnable{
 			@Override
 			public void run() {
 				LogUtil.info(PockerTimeTask.class, 
-						"线程:{0};发送Pocker请求[bakurl=>{1}]",
+						"线程:[{0}];发送Pocker请求[bakurl=>{1}]",
 						pockerThread.getName(),
 						bakUrl);
-				String rslt=WebUtil.sendGet(bakUrl);  
+				String rslt=WebUtil.sendGet(bakUrl,seraNum);  
 				if(rslt!=null&&rslt!=""){
 					LogUtil.info(TimerTask.class, 
-							"请求响应[{0}]",rslt);
+							"线程：[{0}];序号=>【{1}】请求响应[{2}]",pockerThread.getName(),seraNum,rslt);
 				}
 				
 			}

@@ -47,7 +47,7 @@ public class WebUtil {
 	 * @return
 	 */
 	public static String requestMapping(HttpServletRequest req) {
-		LogUtil.info(WebUtil.class, "接收到WEB请求[{0}]", req.getRequestURI());
+		LogUtil.info(WebUtil.class, "接收到WEB请求[{0}]", req.getRequestURL());
 		return req.getRequestURI().replace(req.getContextPath() + "/", "");
 	}
 
@@ -87,7 +87,7 @@ public class WebUtil {
 	 * @param bakUrl
 	 * @return
 	 */
-	public static String sendGet(String bakUrl) {
+	public static String sendGet(String bakUrl,long serNum) {
 		HttpURLConnection con = null;
 		BufferedReader br = null;
 		StringBuffer resultBuffer = new StringBuffer("");
@@ -102,7 +102,7 @@ public class WebUtil {
 			while ((temp = br.readLine()) != null) {
 				resultBuffer.append(temp);
 			}
-			LogUtil.info(WebUtil.class, "请求发送成功URL=>{0}", bakUrl);
+			LogUtil.info(WebUtil.class, "序号=>[{0}];请求发送成功URL=>{1}",serNum, bakUrl);
 		} catch (Exception e) {
 			LogUtil.error(WebUtil.class, "WebUtil.sendGet", "请求发送失败URL=>{0}", bakUrl);
 		} finally {

@@ -1,7 +1,7 @@
 package com.yidingliu.dev;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,19 +17,22 @@ public class PockerTaskExecutor {
 	/**
 	 * 任务队列
 	 */
-	private static Queue<PockerTimeTask> taskQueue;
+	private static List<PockerTimeTask> taskQueue;
 	
     /**
      * 线程池
      */
     private ExecutorService threadPool;
     
+    private long recieveTotal=0;
+    private long executeTotal=0;
+    
     /**
      * 实例化线程执行管理
      * @param maxThreads 线程池最大线程数
      */
     public PockerTaskExecutor(int maxThreads) {
-    	taskQueue = new ConcurrentLinkedQueue<>();
+    	taskQueue = new ArrayList<>();
         threadPool = Executors.newFixedThreadPool(maxThreads);
         
         Manager manager = new Manager();
@@ -40,23 +43,31 @@ public class PockerTaskExecutor {
     /**
      * @param task
      */
-    public void receivedTask(PockerTimeTask task){
-    		taskQueue.add(task);
+    public void receivedTask(long msce,String bakUrl){
+    	recieveTotal++;
+    	taskQueue.add(new PockerTimeTask(msce, bakUrl, recieveTotal));
+    	LogUtil.info(getClass(), "接受定时任务总数=>【{0}】", recieveTotal);
+    	synchronized (taskQueue) {
+    		taskQueue.notify();
+		}
+    	
     }
     
     class Manager implements Runnable {
-        int num = 0;
         public void run() {
             while (true) {
                 try {
-                    while (!taskQueue.isEmpty()) {
-                    	 LogUtil.info(PockerTaskExecutor.class,"定时任务队列的长度为:{0}",taskQueue.size());
-                         PockerTimeTask task = taskQueue.poll();
-                         num++;
-                         LogUtil.info(PockerTaskExecutor.class,"成功从队列中取到定时任务！",num);
-                         threadPool.execute(task);
+                    synchronized (taskQueue) {
+                        while (taskQueue.isEmpty()) {
+                        	taskQueue.wait();
+                        }
+                        PockerTimeTask task = taskQueue.remove(0);
+                        executeTotal++;
+                        threadPool.execute(task);
+                        LogUtil.info(Manager.class,"执行第【{0}】个定时任务！",executeTotal);
+
                     }
-                } catch (Exception t) {
+                } catch (InterruptedException t) {
                     break;
                 }
             }
