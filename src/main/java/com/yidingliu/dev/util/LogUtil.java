@@ -60,8 +60,8 @@ public class LogUtil {
 	 * @param params
 	 */
 	public static void error(Class<?> clazz, String methodName, String context, Object... params) {
-		context = "methodName=>(" + methodName + ");error->" + context;
-		error(clazz, context, params);
+		context = "methodName=>(" + methodName + ");error->" + formatParam(context, params);
+		error(clazz, context);
 	}
 
 	/**

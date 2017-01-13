@@ -1,10 +1,6 @@
 package com.yidingliu.dev.util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,47 +75,5 @@ public class WebUtil {
 		}
 	}
 
-	/** 
-	 * <p>标题: sendGet</p>	
-	 * <p>说明: </p>	
-	 * <p>作者: chenchuan
-	 * <p>时间: 2017年1月12日</p>
-	 * @param bakUrl
-	 * @return
-	 */
-	public static String sendGet(String bakUrl,long serNum) {
-		HttpURLConnection con = null;
-		BufferedReader br = null;
-		StringBuffer resultBuffer = new StringBuffer("");
-		try {
-			URL url = new URL(bakUrl);
-			con = (HttpURLConnection) url.openConnection();
-			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.connect();
-			resultBuffer = new StringBuffer();
-			br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-			String temp;
-			while ((temp = br.readLine()) != null) {
-				resultBuffer.append(temp);
-			}
-			LogUtil.info(WebUtil.class, "序号=>[{0}];请求发送成功URL=>{1}",serNum, bakUrl);
-		} catch (Exception e) {
-			LogUtil.error(WebUtil.class, "WebUtil.sendGet", "请求发送失败URL=>{0}", bakUrl);
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					br = null;
-					throw new RuntimeException(e);
-				} finally {
-					if (con != null) {
-						con.disconnect();
-						con = null;
-					}
-				}
-			}
-		}
-		return resultBuffer!=null?resultBuffer.toString():"";
-	}
+
 }

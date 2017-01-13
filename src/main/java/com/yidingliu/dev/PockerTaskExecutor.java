@@ -19,6 +19,11 @@ public class PockerTaskExecutor {
 	 */
 	private static List<PockerTimeTask> taskQueue;
 	
+	/**
+	 * 队列上限
+	 */
+	private static final int MAX_WAIT_QUEUE=100;
+	
     /**
      * 线程池
      */
@@ -58,7 +63,7 @@ public class PockerTaskExecutor {
             while (true) {
                 try {
                     synchronized (taskQueue) {
-                        while (taskQueue.isEmpty()) {
+                        while (taskQueue.isEmpty()||taskQueue.size()>MAX_WAIT_QUEUE) {
                         	taskQueue.wait();
                         }
                         PockerTimeTask task = taskQueue.remove(0);

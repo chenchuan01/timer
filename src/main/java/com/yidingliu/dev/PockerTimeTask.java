@@ -3,8 +3,8 @@ package com.yidingliu.dev;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.yidingliu.dev.util.HttpClientUtil;
 import com.yidingliu.dev.util.LogUtil;
-import com.yidingliu.dev.util.WebUtil;
 
 /**
  * 急速扑克定时任务
@@ -49,7 +49,7 @@ public class PockerTimeTask implements Runnable{
 						"线程:[{0}];发送Pocker请求[bakurl=>{1}]",
 						pockerThread.getName(),
 						bakUrl);
-				String rslt=WebUtil.sendGet(bakUrl,seraNum);  
+				String rslt=HttpClientUtil.sendPockerGet(bakUrl,seraNum);  
 				if(rslt!=null&&rslt!=""){
 					LogUtil.info(TimerTask.class, 
 							"线程：[{0}];序号=>【{1}】请求响应[{2}]",pockerThread.getName(),seraNum,rslt);
