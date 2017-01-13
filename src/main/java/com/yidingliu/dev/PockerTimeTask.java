@@ -49,15 +49,21 @@ public class PockerTimeTask implements Runnable{
 						"线程:[{0}];发送Pocker请求[bakurl=>{1}]",
 						pockerThread.getName(),
 						bakUrl);
-				String rslt=HttpClientUtil.sendPockerGet(bakUrl,seraNum);  
-				if(rslt!=null&&rslt!=""){
-					LogUtil.info(TimerTask.class, 
-							"线程：[{0}];序号=>【{1}】请求响应[{2}]",pockerThread.getName(),seraNum,rslt);
+				try {
+					String rslt=HttpClientUtil.sendPockerGet(bakUrl,seraNum);  
+					if(rslt!=null&&rslt!=""){
+						LogUtil.info(TimerTask.class, 
+								"线程：[{0}];序号=>【{1}】请求响应[{2}]",pockerThread.getName(),seraNum,rslt);
+					}
+				} catch (Exception e) {
+					LogUtil.error(getClass(), "请求失败", e);
+				}finally {
+					System.gc();
 				}
-				
 			}
 
 		}, msec);
+		
 	}
 
 }

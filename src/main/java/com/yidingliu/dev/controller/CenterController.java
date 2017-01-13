@@ -21,13 +21,9 @@ public class CenterController extends HttpServlet {
 	
 	private PockerTaskExecutor pockerTaskExecutor;
 	
-	private Integer maxThreads;
 	
 	public CenterController() {
-		if(maxThreads==null){
-			maxThreads=100;
-		}
-		pockerTaskExecutor= new PockerTaskExecutor(maxThreads);
+		pockerTaskExecutor= new PockerTaskExecutor();
 	}
 
 	@Override
@@ -56,13 +52,4 @@ public class CenterController extends HttpServlet {
 		}
 		WebUtil.write("success",req,resp);
 	}
-
-	public Integer getMaxThreads() {
-		return maxThreads;
-	}
-
-	public void setMaxThreads(Integer maxThreads) {
-		this.maxThreads = maxThreads;
-	}
-	
 }

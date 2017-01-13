@@ -36,9 +36,9 @@ public class PockerTaskExecutor {
      * 实例化线程执行管理
      * @param maxThreads 线程池最大线程数
      */
-    public PockerTaskExecutor(int maxThreads) {
+    public PockerTaskExecutor() {
     	taskQueue = new ArrayList<>();
-        threadPool = Executors.newFixedThreadPool(maxThreads);
+        threadPool = Executors.newCachedThreadPool();
         
         Manager manager = new Manager();
         Thread consumer  = new Thread(manager,"守护线程");
@@ -68,9 +68,8 @@ public class PockerTaskExecutor {
                         }
                         PockerTimeTask task = taskQueue.remove(0);
                         executeTotal++;
-                        threadPool.execute(task);
+                        threadPool.submit(task);
                         LogUtil.info(Manager.class,"执行第【{0}】个定时任务！",executeTotal);
-
                     }
                 } catch (InterruptedException t) {
                     break;
